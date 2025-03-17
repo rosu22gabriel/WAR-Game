@@ -1,31 +1,50 @@
 body {
     margin: 0;
     padding: 0;
+    text-align: center;
+    color: white;
     background-color: black;
     font-family: monospace;
 }
 
 .game-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     height: 100vh;
+    padding: 0 5%;
 }
 
-.player {
-    width: 40%;
-    height: 100%;
+.playground, .player {
+    width: 25%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    color: white;
 }
 
 .card {
-    font-size: 3rem;
-    text-align: center;
-    padding: 20px;
+    width: 150px;
+    height: 200px;
     border: 2px solid white;
-    border-radius: 10px;
-    background-color: #222222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 20px auto;
+}
+
+button {
+    padding: 10px 20px;
+    font-size:18px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #777;
+}
+
+#result {
+    font-size: 20px;
+    margin-top: 20px; 
 }
