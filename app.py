@@ -1,16 +1,19 @@
 import os
 import re
-from flask import Flask, render_template
+import random
+from flask import Flask, render_template, session, jsonify
 from PIL import Image, ImageDraw, ImageFont
+from collections import deque
 
 
 app = Flask(__name__)
-
+#app.secret_key = ''
  
 suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
 values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
 suit_symbols = {"Hearts": "♥", "Diamonds": "♦", "Clubs": "♣", "Spades": "♠"}
-
+CARD_VALUES = {v: i+2 for i, v in enumerate(values)}
+WAR_RANKS = {'J': 1, 'Q':2, 'K':3, 'A':4}
 
 #Defining a class for card
 class Card:
@@ -114,14 +117,107 @@ def generate_all_card_images(deck):
         print(f"Generating image for {card.value} of {card.suit}", flush=True)
 
 
+class WarGame:
+    def __init__(self):
+        self.deck = deck
+        random.shuffle(self.deck)
+        self.player1 = deque(self.deck[:26])
+        self.player2 = deque(self.deck[26:])
+        self.pot = []
+        self.war_count = 0
+        self.game_log = []
+        self.battle_cards = []
+
+    def play_round(self):
+        if self.game_over:
+            return    
+
+        try: 
+            p1_card = self.player1.popleft()
+            p2_card = self.player2.popleft()
+            self.battle_cards = [p1_card, p2_card]
+            self.pot.extend(self.battle_cards)
+            self.log(f"Player 1 plays {p1_card.value} of {p1_card.suit}")
+            self.log(f"Player 2 plays {p2_card.value} of {p2_card.suit}")
+
+            if CARD_VALUES[p1_card.value] > CARD_VALUES[p2_card.value]:
+                self.resolve_round(winner = 1)
+            elif CARD_VALUES[p2_card.value] > CARD_VALUES[p1_card.value]:
+                self.resolve_round(winner = 2)
+            else: 
+                self.start_war(p1_card.value)
+        except IndexError:
+            self.handle_game_over()
+
+    
+    def resolve_round(self, winner):
+        winner_deck = self.player1 if winner == 1 else self.player2
+        random.shuffle(self.pot)
+        winner_deck.extend(self.pot)
+        self.log(f"\nPlayer {winner} wins the round")
+        self.pot.clear()
+        self.battle_card = []
+        self.check_winner()
+
+    def check_winner(self):
+        if len(self.player1) == 0:
+            self.log("\n PLAYER 1 WINS THE GAME! ")
+        elif len(self.player2) == 0:
+            self.log("\n PLAYER 2 WINS BY DEFAULT ")
+
+    def log(self, message):
+        self.game_log.append(message)
+
+
+    #property
+    def game_over(self):
+        return len(self.player1) == 0 or len(self.player2) == 0
 
 @app.route("/")
 def home():
+    if 'game' not in session:
+        #Generate_all_card_images() function call
+        if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+            generate_all_card_images(deck)
+        session['game'] = { 
+            'player1' : list(WarGame().player1),
+            'player2' : list(WarGame().player2),
+            'pot': [],
+            'war_count': 0,
+            'game_log': [],
+            'battle_cards': []
+        }
     return render_template("index.html")
+
+@app.route("/play", methods=["POST"])
+def play_round():
+    game = WarGame()
+    game.__dict__.update(session['game'])
+
+    game.player1 = deque(game.player1)
+    game.player2 = deque(game.player2)
+
+    game.play_round()
+
+    session['game'] = { 
+        'player1': list(game.player1),
+        'player2': list(game.player2),
+        'pot': game.pot,
+        'war_count': game.war_count,
+        'game_log': game.game_log,
+        'battle_cards': game.battle_cards
+    }
+
+    return jsonify({ 
+        'p1_count': len(game.player1), 
+        'p2_count': len(game.player2),
+        'log': "<br>".join(game.game_log[-5]),
+        'battle_cards': [
+            f"{card.value}_{card.suit}.png"
+            for card in game.battle_cards
+        ]
+    })
 
 
 if __name__ == "__main__":
-    #Generate_all_card_images() function call
-    if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
-        generate_all_card_images(deck)
     app.run(debug=True)
