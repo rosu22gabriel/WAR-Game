@@ -52,32 +52,47 @@ def generate_card_image(card):
     filename = f"static/cards/{card_name}"
     if not os.path.exists(filename):
         ascii_card = card.generate_ascii_card()
-        print(f"Generated ASCII art for {card.value} of {card.suit}:\n {ascii_card}", flush=True)
+        print(f"Generated image for {card.value} of {card.suit}:\n {ascii_card}", flush=True)
 
-        width, height = 400, 200
+        width, height = 150, 200
         image = Image.new('RGB', (width, height), color=(255, 255, 255))
-
         draw = ImageDraw.Draw(image)
 
         try: 
-            font = ImageFont.truetype("arial.ttf", 18)
+            value_font = ImageFont.truetype("arial.ttf", 24)
+            symbol_font = ImageFont.truetype("arial.ttf", 48)
             print("Loaded font: arial.ttf", flush=True)
         except IOError:
             try: 
-                font = ImageFont.truetype("DejaVuSans.ttf", 18)
+                value_font = ImageFont.truetype("DejaVuSans.tff", 24)
+                symbol_font = ImageFont.truetype("DejaVuSans.tff", 48)
                 print("Loaded fallback font: DejaVuSans.tff", flush=True)
             except IOError:
-                font = ImageFont.load_default()
+                value_font = ImageFont.load_default()
+                symbol_font = ImageFont.load_default()
                 print("Loaded default font", flush=True)
 
+        draw.text((10, 10), str(card.value), font=value_font, fill=(0, 0, 0))
 
-        y_offset = 10
-        for line in ascii_card.split("\n"):
-            draw.text((10, y_offset), line, font=font, fill=(0, 0, 0))
-            y_offset += 20
+        symbol_bbox = draw.textbbox((0, 0), card.symbol, font=symbol_font)
+        symbol_width = symbol_bbox[2] - symbol_bbox[0]
+        symbol_height = symbol_bbox[3] - symbol_bbox[1]
+        draw.text(((width - symbol_width) // 2, (height - symbol_height) // 2), card.symbol, font=symbol_font, 
+                  fill=(255, 0, 0) if card.suit in ["Hearts", "Diamonds"] else (0, 0, 0) )
+
+
+        #y_offset = 10
+        #for line in ascii_card.split("\n"):
+            #draw.text((10, y_offset), line, font=font, fill=(0, 0, 0))
+            #y_offset += 20
+
+        rotated_value = Image.new('RGBA', (30, 30))
+        rotated_draw = ImageDraw.Draw(rotated_value)
+        rotated_draw.text((0, 0), str(card.value), font=value_font, fill=(0, 0, 0))
+        rotated_value = rotated_value.rotate(180)
+        image.paste(rotated_value, (width - 40, height -40), rotated_value)
 
         image.save(filename)
-
         if os.path.exists(filename):
             print(f"Image successfully created: {filename}", flush=True)
         else: 
