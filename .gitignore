@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyre
+*.pytype/
+*.so
+.Python
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Generated Card Images
+static/cards/
+
+# Environment Variables
+.env
+.env.local
+.flaskenv
+
+# IDE
+.vscode/
+.idea/
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local Development
+instance/
+.webassets-cache
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
