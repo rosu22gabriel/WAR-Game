@@ -1,13 +1,13 @@
 import os
 import re
-import random
+import random 
 from flask import Flask, render_template, session, jsonify
 from PIL import Image, ImageDraw, ImageFont
 from collections import deque
 
 
 app = Flask(__name__)
-#app.secret_key = ''
+app.secret_key = os.urandom(24) 
  
 suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
 values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
@@ -21,6 +21,17 @@ class Card:
         self.suit = suit
         self.value = value
         self.symbol = symbol
+
+    def to_dict(self):
+        return {
+            'suit': self.suit,
+            'value': self.value,
+            'symbol': self.symbol
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data['suit'], data['value'], data['symbol'])
 
 
 #Function for generating a ASCII art face for a card
@@ -128,6 +139,28 @@ class WarGame:
         self.game_log = []
         self.battle_cards = []
 
+    def to_dict(self):
+        return {
+            'player1': [card.to_dict() for card in self.player1],
+            'player2': [card.to_dict() for card in self.player2],
+            'pot': [card.to_dict() for card in self.pot],
+            'war_count': self.war_count,
+            'game_log': self.game_log,
+            'battle_cards': [card.to_dict() for card in self.battle_cards]
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        game = cls()
+        game.player1 = deque([Card.from_dict(c) for c in data.get('player1', [])])
+        game.player2 = deque([Card.from_dict(c) for c in data.get('player2', [])])
+        game.pot = [Card.from_dict(c) for c in data.get('pot', [])]
+        game.war_count = data.get('war_count', 0)
+        game.game_log = data.get('game_log', [])
+        game.battle_cards = [Card.from_dict(c) for c in data.get('battle_cards', [])]
+        return game
+
+
     def play_round(self):
         if self.game_over:
             return    
@@ -159,54 +192,37 @@ class WarGame:
         self.battle_card = []
         self.check_winner()
 
+
     def check_winner(self):
         if len(self.player1) == 0:
             self.log("\n PLAYER 1 WINS THE GAME! ")
         elif len(self.player2) == 0:
             self.log("\n PLAYER 2 WINS BY DEFAULT ")
 
+
     def log(self, message):
         self.game_log.append(message)
 
 
-    #property
     def game_over(self):
         return len(self.player1) == 0 or len(self.player2) == 0
+
 
 @app.route("/")
 def home():
     if 'game' not in session:
-        #Generate_all_card_images() function call
-        if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
-            generate_all_card_images(deck)
-        session['game'] = { 
-            'player1' : list(WarGame().player1),
-            'player2' : list(WarGame().player2),
-            'pot': [],
-            'war_count': 0,
-            'game_log': [],
-            'battle_cards': []
-        }
+        game = WarGame()
+        session['game'] = game.to_dict()
     return render_template("index.html")
 
 @app.route("/play", methods=["POST"])
 def play_round():
-    game = WarGame()
-    game.__dict__.update(session['game'])
-
-    game.player1 = deque(game.player1)
-    game.player2 = deque(game.player2)
+    game_data = session.get('game', {})
+    game = WarGame.from_dict(game_data)
 
     game.play_round()
 
-    session['game'] = { 
-        'player1': list(game.player1),
-        'player2': list(game.player2),
-        'pot': game.pot,
-        'war_count': game.war_count,
-        'game_log': game.game_log,
-        'battle_cards': game.battle_cards
-    }
+    session['game'] = game.to_dict()
 
     return jsonify({ 
         'p1_count': len(game.player1), 
@@ -218,6 +234,19 @@ def play_round():
         ]
     })
 
+@app.route("/reset")
+def reset_game():
+    session.pop('game', None)
+    return home()
 
-if __name__ == "__main__":
+@app.route("/state")
+def game_state():
+    return jsonify({ 
+        'p1_count': len(session.get('game', {}).get('player1', [])),
+        'p2_count': len(session.get('game', {}).get('player2', []))
+})
+
+if __name__ == "__main__":    
+    if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+        generate_all_card_images(deck)
     app.run(debug=True)

@@ -41,3 +41,6 @@ instance/
 .coverage
 htmlcov/
 .pytest_cache/
+
+
+*.code-workspace
