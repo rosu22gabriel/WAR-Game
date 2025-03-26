@@ -10,29 +10,48 @@
 <body>
     <p id="result"></p>
 
+    <!-- Player 1 Area-->
     <div class="game-container">
         <div class="player player-1">
             <h2>Player 1</h2>
-            <div class="card-back"></div>
-            <p>Cards left: <span id="player1-cards">26</span></p>
-            <div class="card" id="player1-card"> 
-            </div>
+                <div class ="card-area">
+                    <div class="card-back"></div>
+                    <p class="card-count">Cards left: <span id="player1-cards">26</span></p>
+                    <div class="battle-card" id="player1-battle"> </div>
         </div>
+        
 
+    <!-- Playground -->
         <div class="playground">
-            <div class="card" id="war-pile">
-                <img src="{{ url_for('static', filename='cards/10_Hearts.png' )}}" alt="10 of Hearts">
+            <div class="battle-area">
+                <div class="battle-card" id="player1-battle-card"></div>
+                <div class="vs-text">VS</div>
+                <div class="battle-card" id="player2-battle-card"></div>
+            </div>
+
+            <div class="war-counter">
+                War Count: <span id="war-count">0</span>
+            </div>
+            <div class="controls">
+                <button id="draw" class="btn">Draw Cards</button>
+                <button id="reset" class="btn">New Game</button>
+            </div>
+            <div id="result" class="game-log"></div>
             </div>
         </div>
 
+        
+    <!-- Player2 Area-->
         <div class="player player-2">
             <h2>Player 2</h2>
-            <div class="card-back"></div>
-            <p>Cards left: <span id="player2-cards">26</span></p>
-            <div class="card" id="player2-card">
+            <div class="card-area">
+                <div class="card-back"></div>
+                <p class="card-count">Cards left: <span id="player2-cards">26</span></p>
+                <div class="battle-card" id="player2-battle"></div>
             </div>
         </div>
     </div>
+    
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     
     <div>
