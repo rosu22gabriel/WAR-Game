@@ -220,7 +220,8 @@ def play_round():
     game_data = session.get('game', {})
     game = WarGame.from_dict(game_data)
 
-    game.play_round()
+    if not game.game_over:
+        game.play_round()
 
     session['game'] = game.to_dict()
 
