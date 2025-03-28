@@ -11,6 +11,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24) 
 app.config['SESSION_PERMANENT'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
+app.config['SESSION_TYPE'] = 'filesystem'
  
 suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
 values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
@@ -221,12 +222,20 @@ def home():
 @app.route("/play", methods=["POST"])
 def play_round():
     game_data = session.get('game', {})
-    game = WarGame.from_dict(game_data)
+    if not game_data:
+        game = WarGame()
+        print("New game initialized")
+    else:
+        game = WarGame.from_dict(game_data)
+        print("Existing game loaded")
 
     if not game.game_over:
+        print("Playing round...")
         game.play_round()
 
-    session['game'] = game.to_dict()
+        session['game'] = game.to_dict()
+        session.modified = True
+        print("Game state saved")
 
     return jsonify({ 
         'p1_count': len(game.player1), 

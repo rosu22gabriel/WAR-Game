@@ -34,21 +34,38 @@ document.getElementById('draw').addEventListener('click', async() =>
             drawButton.disabled = true;
             drawButton.textContent = 'Drawing...';
 
-            const response = await fetch('/play', { method: 'POST'});
-            if (!response.ok) throw new Error('HTTP error! status: ${response.stats}');
-        
+            const response = await fetch('/play', { method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            console.log("Response received: ", response);
+
+
+            if (!response.ok)
+                { 
+                    const errorText = await response.text();
+                    throw new Error('HTTP error! status: ${response.stats}');
+                }
             const result = await response.json();
+            console.log("Result data:", result);
 
-            const p1Card = document.getElementById('player1-battle-card');
-            const p2Card = document.getElementById('player2-battle-card');
 
-            if (result.battle_cards.length >= 2){ 
-                p1Card.innerHTML = '<img src="/static/cards/${result.battle_cards[0]}" class="card-img" alt="Player1 Card">';
-                p2Card.innerHTML = '<img src="/static/cards/${result.battle_cards[1]}" class="card-img" alt="Player2 Card">';
-                
-                p1Card.innerHTML.onerror = () => console.error('Failed to load:', p1Card.innerHTML);
-                p2Card.innerHTML.onerror = () => console.error('Failed to load:', p2Card.innerHTML);
+            if (result.battle_cards && result.battle_cards.length >= 2){ 
+                console.log("Cards to display:", result.battle_cards);
+                document.getElementById('player1-battle-card').innerHTML = `
+                <img src="/static/cards/${result.battle_cards[1]}" 
+                    onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`;
+                document.getElementById('player2-battle-card').innerHTML = `
+                <img src="/static/cards/${result.battle_cards[1]}" 
+                    onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`;   
             }
+
+
+            document.getElementById('player1-cards').textContent = result.p1_count;
+            document.getElementById('player2-cards').textContent = result.p2_count;
+
+            console.log("Draw completed successfully");
 
             const logElement = document.getElementById('result');
             logElement.innerHTML = result.log;
