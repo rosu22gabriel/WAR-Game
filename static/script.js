@@ -1,3 +1,13 @@
+// const elements = {
+//     drawBtn: document.getElementById('draw-btn'),
+//     resetBtn: document.getElementById('reset-btn'),
+//     player1Card: document.getElementById('player1-btn'),
+//     player2Card: document.getElementById('player2-btn'),
+//     player1Count: document.getElementById('player1-count'),
+//     player2Count: document.getElementById('player2-count'),
+//     gameLog: document.getElementById('game-log'),
+// }
+
 document.addEventListener('DOMContentLoaded', async() => 
 {   
     await updateGameState();
@@ -35,6 +45,9 @@ document.getElementById('draw').addEventListener('click', async() =>
             if (result.battle_cards.length >= 2){ 
                 p1Card.innerHTML = '<img src="/static/cards/${result.battle_cards[0]}" class="card-img" alt="Player1 Card">';
                 p2Card.innerHTML = '<img src="/static/cards/${result.battle_cards[1]}" class="card-img" alt="Player2 Card">';
+                
+                p1Card.innerHTML.onerror = () => console.error('Failed to load:', p1Card.innerHTML);
+                p2Card.innerHTML.onerror = () => console.error('Failed to load:', p2Card.innerHTML);
             }
 
             const logElement = document.getElementById('result');
@@ -59,7 +72,7 @@ document.getElementById('reset').addEventListener('click', async () =>
         if (!response.ok) throw new Error('Reset failed');
         location.reload();
     } catch (error){ 
-        showError('Reset failed: ${error message}');
+        console.error('Reset error', error);
     }
 });
 
