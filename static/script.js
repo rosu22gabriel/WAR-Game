@@ -1,17 +1,21 @@
 document.addEventListener('DOMContentLoaded', async() => 
 {   
-    try{
+    await updateGameState();
+});
+
+async function updateGameState(){ 
+    try {
         const response = await fetch('/state');
-        if (response.ok) {
+        if (response.ok)
+        { 
             const state = await response.json();
             document.getElementById('player1-cards').textContent = state.p1_count;
             document.getElementById('player2-cards').textContent = state.p2_count;
         }
-    } catch (error)
-    { 
-        console.log('State load error:', error);
+    } catch (error){ 
+        console.error('State update error:', error);
     }
-});
+}
 
 document.getElementById('draw').addEventListener('click', async() =>
 { 
@@ -21,36 +25,30 @@ document.getElementById('draw').addEventListener('click', async() =>
             drawButton.textContent = 'Drawing...';
 
             const response = await fetch('/play', { method: 'POST'});
-            if (!response.ok) throw new Error('Server error');
+            if (!response.ok) throw new Error('HTTP error! status: ${response.stats}');
         
             const result = await response.json();
+
+            const p1Card = document.getElementById('player1-battle-card');
+            const p2Card = document.getElementById('player2-battle-card');
+
+            if (result.battle_cards.length >= 2){ 
+                p1Card.innerHTML = '<img src="/static/cards/${result.battle_cards[0]}" class="card-img" alt="Player1 Card">';
+                p2Card.innerHTML = '<img src="/static/cards/${result.battle_cards[1]}" class="card-img" alt="Player2 Card">';
+            }
+
+            const logElement = document.getElementById('result');
+            logElement.innerHTML = result.log;
+
+            await updateGameState();
+
         } catch (error)
         { 
-            document.getElementById('result').innerHTML='Error: ${error.message}';
+            console.error('Draw error:', error);
+            showError(error.message);
         } finally {
-            drawButton.disabled = result?.game_over || false;
-            drawButton.textContent = 'Draw Cards';
+            drawButton.disable = false;
         }
-
-    // Update card counts
-    document.getElementById('player1-cards').textContent = result.p1_count;
-    document.getElementById('player2-cards').textContent = result.p2_count;
-
-    // Update battle cards
-    const battleAreas = document.querySelectorAll('.battle-card');
-    result.battle_cards.array.forEach((card, index) => {
-        battleAreas[index].innerHTML =
-        '<img src="/static/cards/${card}" alt="Battle Card" class="card-img">';
-    });
-
-    // Update game log
-    document.getElementsByID('result').innerHTML = result.log;
-
-    // Disable button if game over
-    if(result.p1_count === 0 || result.p2_count === 0)
-    { 
-        document.getElementById('draw').disabled = true;
-    }
 });
 
 
@@ -59,10 +57,9 @@ document.getElementById('reset').addEventListener('click', async () =>
     try {
         const response = await fetch('/reset', {method: 'POST'});
         if (!response.ok) throw new Error('Reset failed');
-
         location.reload();
     } catch (error){ 
-        alert('Reset failed: ${error message}');
+        showError('Reset failed: ${error message}');
     }
 });
 
