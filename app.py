@@ -227,7 +227,7 @@ def play_round():
     return jsonify({ 
         'p1_count': len(game.player1), 
         'p2_count': len(game.player2),
-        'log': "<br>".join(game.game_log[-5]),
+        'log': "<br>".join(game.game_log[-5:]),
         'battle_cards': [
             f"{card.value}_{card.suit}.png"
             for card in game.battle_cards
