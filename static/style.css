@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    padding: 0;
+    padding: 20px;
     text-align: center;
     color: white;
     background-color: black;
@@ -22,7 +22,7 @@ body {
     align-items: center;
 }
 
-.card {
+.card-back, .battle-card {
     width: 150px;
     height: 200px;
     border: 2px solid white;
@@ -41,10 +41,35 @@ button {
 }
 
 button:hover {
-    background-color: #777;
+    background-color: grey;
+}
+
+.error-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px;
+    background: red;
+    color: white;
+    border-radius: 5px;
+    display: none;
 }
 
 #result {
     font-size: 20px;
     margin-top: 20px; 
+}
+
+.card-img {
+    transition: transform 0.5s ease-in-out;
+}
+
+.card-entering {
+    transform: rotateY(0deg) scale(1.2);
+    animation: cardFlip 0.6s ease-in-out;
+}
+
+@keyframes cardFlip{
+    0% { transform: rotateY(180deg); opacity: 0; }
+    100% { transform: rotateY(0deg); opacity: 1; }
 }
