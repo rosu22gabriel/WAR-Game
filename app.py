@@ -4,10 +4,13 @@ import random
 from flask import Flask, render_template, session, jsonify
 from PIL import Image, ImageDraw, ImageFont
 from collections import deque
+from datetime import timedelta
 
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) 
+app.config['SESSION_PERMANENT'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
  
 suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
 values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
@@ -249,6 +252,7 @@ def game_state():
 })
 
 if __name__ == "__main__":    
-    if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
-        generate_all_card_images(deck)
+    if not os.path.exists('static/cards'):
+        os.makedirs('static/cards')    
+    generate_all_card_images(deck)
     app.run(debug=True)
