@@ -235,10 +235,11 @@ def play_round():
         ]
     })
 
-@app.route("/reset")
+@app.route("/reset", method=['POST'])
 def reset_game():
     session.pop('game', None)
-    return home()
+    #return home()
+    return jsonify({"status": "reset"})
 
 @app.route("/state")
 def game_state():
