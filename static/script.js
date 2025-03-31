@@ -10,21 +10,45 @@
 
 document.addEventListener('DOMContentLoaded', async() => 
 {   
-    //await updateGameState();
+    await updateGameState();
 });
 
-async function updateGameState(){ 
+// async function updateGameState(){ 
+//     try {
+//         const response = await fetch('/state');
+//         if (response.ok)
+//         { 
+//             const state = await response.json();
+//             console.log("Game state updated:", state); 
+//             document.getElementById('player1-cards').textContent = state.p1_count;
+//             document.getElementById('player2-cards').textContent = state.p2_count;
+//         }
+//     } catch (error){ 
+//         console.error('State update error:', error);
+//     }
+// }
+
+
+async function updateGameState() {
     try {
         const response = await fetch('/state');
-        if (response.ok)
-        { 
+        if (response.ok) {
             const state = await response.json();
-            console.log("Game state updated:", state); 
-            document.getElementById('player1-cards').textContent = state.p1_count;
-            document.getElementById('player2-cards').textContent = state.p2_count;
+            console.log("Stare joc primită:", state);  // Debug
+            
+            // Actualizează interfața
+            document.getElementById('player1-cards').textContent = state.p1_count ?? 26;
+            document.getElementById('player2-cards').textContent = state.p2_count ?? 26;
+            
+            // Resetează cardurile afișate
+            document.getElementById('player1-battle-card').innerHTML = '';
+            document.getElementById('player2-battle-card').innerHTML = '';
         }
-    } catch (error){ 
-        console.error('State update error:', error);
+    } catch (error) {
+        console.error('Eroare la încărcarea stării:', error);
+        // Fallback la valori implicite
+        document.getElementById('player1-cards').textContent = 26;
+        document.getElementById('player2-cards').textContent = 26;
     }
 }
 

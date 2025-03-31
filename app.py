@@ -239,7 +239,6 @@ def play_round():
     if not game.game_over():
         print("Playing round...")
         game.play_round()
-
         session['game'] = game.to_dict()
         session.modified = True
         print("Game state saved")
@@ -265,7 +264,7 @@ def game_state():
     return jsonify({ 
         'p1_count': len(session.get('game', {}).get('player1', [])),
         'p2_count': len(session.get('game', {}).get('player2', []))
-})
+    })
 
 if __name__ == "__main__":    
     if not os.path.exists('static/cards'):
