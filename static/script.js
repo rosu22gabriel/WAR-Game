@@ -10,7 +10,7 @@
 
 document.addEventListener('DOMContentLoaded', async() => 
 {   
-    await updateGameState();
+    //await updateGameState();
 });
 
 async function updateGameState(){ 
