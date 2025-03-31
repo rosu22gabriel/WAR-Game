@@ -82,9 +82,9 @@ def generate_card_image(card):
             print("Loaded font: arial.ttf", flush=True)
         except IOError:
             try: 
-                value_font = ImageFont.truetype("DejaVuSans.tff", 24)
-                symbol_font = ImageFont.truetype("DejaVuSans.tff", 48)
-                print("Loaded fallback font: DejaVuSans.tff", flush=True)
+                value_font = ImageFont.truetype("DejaVuSans.ttf", 24)
+                symbol_font = ImageFont.truetype("DejaVuSans.ttf", 48)
+                print("Loaded fallback font: DejaVuSans.ttf", flush=True)
             except IOError:
                 value_font = ImageFont.load_default()
                 symbol_font = ImageFont.load_default()
@@ -200,7 +200,7 @@ class WarGame:
         winner_deck.extend(self.pot)
         self.log(f"\nPlayer {winner} wins the round")
         self.pot.clear()
-        self.battle_card = []
+        self.battle_cards = []
         self.check_winner()
 
 
@@ -221,7 +221,7 @@ class WarGame:
 
 @app.route("/")
 def home():
-    if 'game' not in session:
+    if 'game' not in session or not session['game']:
         game = WarGame()
         session['game'] = game.to_dict()
     return render_template("index.html")
