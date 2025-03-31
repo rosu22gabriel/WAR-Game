@@ -249,7 +249,7 @@ def play_round():
 
 @app.route("/reset", methods=['POST'])
 def reset_game():
-    session.pop('game', None)
+    session.clear()
     #return home()
     return jsonify({"status": "Game reset"})
 
