@@ -28,110 +28,74 @@ async function updateGameState(){
     }
 }
 
-// document.getElementById('draw').addEventListener('click', async() =>
-// { 
-//     const drawButton = document.getElementById('draw');
-//     try {
-//             drawButton.disabled = true;
-//             drawButton.textContent = 'Drawing...';
-
-//             const response = await fetch('/play', { method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 }
-//             });
-//             console.log("Response received: ", response);
-
-
-//             if (!response.ok)
-//                 { 
-//                     const errorText = await response.text();
-//                     throw new Error('HTTP error! status: ${response.status} - ${errorText}');
-//                 }
-//             const result = await response.json();
-//             console.log("Result data:", result);
-
-
-//             if (result.battle_cards && result.battle_cards.length >= 2){ 
-//                 console.log("Cards to display:", result.battle_cards);
-//                 document.getElementById('player1-battle-card').innerHTML = `
-//                 <img src="/static/cards/${result.battle_cards[0]}" 
-//                     onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`;
-//                 document.getElementById('player2-battle-card').innerHTML = `
-//                 <img src="/static/cards/${result.battle_cards[1]}" 
-//                     onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`;   
-//             }
-
-
-//             document.getElementById('player1-cards').textContent = result.p1_count;
-//             document.getElementById('player2-cards').textContent = result.p2_count;
-
-//             console.log("Draw completed successfully");
-
-//             const logElement = document.getElementById('result');
-//             logElement.innerHTML = result.log;
-
-//             await updateGameState();
-
-//         } catch (error)
-//         { 
-//             console.error('Draw error:', error);
-//             showError(error.message);
-//         } finally {
-//             drawButton.disabled = false;
-//             drawButton.textContent = "Draw";
-//         }
-// });
-
-
-document.getElementById('draw').addEventListener('click', async () => {
+document.getElementById('draw').addEventListener('click', async() =>
+{ 
     const drawButton = document.getElementById('draw');
     try {
-        drawButton.disabled = true;
-        drawButton.textContent = 'Drawing...';
+            drawButton.disabled = true;
+            drawButton.textContent = 'Drawing...';
 
-        const response = await fetch('/play', { method: 'POST' });
-        const result = await response.json();
-        
-        console.log("Răspuns backend:", result);
-        
-        if (result.battle_cards && result.battle_cards.length >= 2) {
-            console.log("URL-uri imagin:", 
-                `/static/cards/${result.battle_cards[0]}`,
-                `/static/cards/${result.battle_cards[1]}`
-            );
-            
-            // Testează încărcarea imaginilor
-            const testImage = new Image();
-            testImage.src = `/static/cards/${result.battle_cards[0]}`;
-            testImage.onload = () => console.log("Imaginea 1 se încarcă");
-            testImage.onerror = () => console.error("Eroare la imaginea 1");
-        }
+            const response = await fetch('/play', { method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            console.log("Response received: ", response);
 
-        // Actualizează UI
-        document.getElementById('player1-cards').textContent = result.p1_count;
-        document.getElementById('player2-cards').textContent = result.p2_count;
-        
-        if (result.battle_cards?.length >= 2) {
-            document.getElementById('player1-battle-card').innerHTML = `
-                <img src="/static/cards/${result.battle_cards[0]}" 
-                     onerror="this.src='/static/card_back.png'">`;
-            document.getElementById('player2-battle-card').innerHTML = `
-                <img src="/static/cards/${result.battle_cards[1]}" 
-                     onerror="this.src='/static/card_back.png'">`;
+
+            if (!response.ok)
+                { 
+                    const errorText = await response.text();
+                    throw new Error('HTTP error! status: ${response.status} - ${errorText}');
+                }
+            const result = await response.json();
+            console.log("Result data:", result);
+
+
+            if (result.battle_cards && result.battle_cards.length >= 2){ 
+                // console.log("Cards to display:", result.battle_cards);
+                // document.getElementById('player1-battle-card').innerHTML = `
+                // <img src="/static/cards/${result.battle_cards[0]}" 
+                //     onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`;
+                // document.getElementById('player2-battle-card').innerHTML = `
+                // <img src="/static/cards/${result.battle_cards[1]}" 
+                //     onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`;   
+                updateCardDisplay(
+                    'player1-battle-card', 
+                    `<img src="/static/cards/${result.battle_cards[0]}" 
+                     onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`
+                );
+                
+                updateCardDisplay(
+                    'player2-battle-card', 
+                    `<img src="/static/cards/${result.battle_cards[1]}" 
+                     onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`
+                );
+            }
+
+
+            document.getElementById('player1-cards').textContent = result.p1_count;
+            document.getElementById('player2-cards').textContent = result.p2_count;
+
+            console.log("Draw completed successfully");
+
+            // const logElement = document.getElementById('result');
+            // logElement.innerHTML = result.log;
+
+            updateLog(result.log);
+
+            await updateGameState();
+
+        } catch (error)
+        { 
+            console.error('Draw error:', error);
+            updateLog(`Error: ${error.message}`);
+            //showError(error.message);
+        } finally {
+            drawButton.disabled = false;
+            drawButton.textContent = "Draw";
         }
-        
-        document.getElementById('result').innerHTML = result.log || "";
-        
-    } catch (error) {
-        console.error("Eroare:", error);
-    } finally {
-        drawButton.disabled = false;
-        drawButton.textContent = 'Draw Cards';
-    }
 });
-
-
 
 
 document.getElementById('reset').addEventListener('click', async () =>
@@ -146,14 +110,18 @@ document.getElementById('reset').addEventListener('click', async () =>
 });
 
 
-function updateCardDisplay(elementId, cardFilename)
+function updateCardDisplay(elementId, cardHTML)
 {
     const container = document.getElementById(elementId);
     container.classList.add('card-entering');
 
+    // setTimeout(() => {
+    //     container.innerHTML = cardFilename ?
+    //         `<img src="/static/cards/${cardFilename}" class="card-img" alt="Battle card">` : '';
+    //     container.classList.remove('card-entering');
+    // }, 300);
     setTimeout(() => {
-        container.innerHTML = cardFilename ?
-            `<img src="/static/cards/${cardFilename}" class="card-img" alt="Battle card">` : '';
+        container.innerHTML = cardHTML || '';
         container.classList.remove('card-entering');
     }, 300);
 }
