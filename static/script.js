@@ -19,6 +19,7 @@ async function updateGameState(){
         if (response.ok)
         { 
             const state = await response.json();
+            console.log("Game state updated:", state); 
             document.getElementById('player1-cards').textContent = state.p1_count;
             document.getElementById('player2-cards').textContent = state.p2_count;
         }
@@ -78,6 +79,7 @@ document.getElementById('draw').addEventListener('click', async() =>
             showError(error.message);
         } finally {
             drawButton.disabled = false;
+            drawButton.textContent = "Draw";
         }
 });
 

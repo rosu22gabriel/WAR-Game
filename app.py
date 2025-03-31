@@ -185,6 +185,13 @@ class WarGame:
                 self.start_war(p1_card.value)
         except IndexError:
             self.handle_game_over()
+        print("Sent response:", { 
+            'p1_count': len(self.player1),
+            'p2_count': len(self.player2),
+            'battle_cards': [f"{card.value}_{card.suit}.png"
+                             for card in self.battle_cards]
+        }, flush=True)
+        
 
     
     def resolve_round(self, winner):
