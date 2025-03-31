@@ -236,7 +236,7 @@ def play_round():
         game = WarGame.from_dict(game_data)
         print("Existing game loaded")
 
-    if not game.game_over:
+    if not game.game_over():
         print("Playing round...")
         game.play_round()
 
