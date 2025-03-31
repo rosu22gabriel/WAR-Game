@@ -248,7 +248,7 @@ def play_round():
         'p2_count': len(game.player2),
         'log': "<br>".join(game.game_log[-5:]),
         'battle_cards': [
-            f"/static/cards/{card.value}_{card.suit}.png"
+            f"{card.value}_{card.suit}.png"
             for card in game.battle_cards
         ]
     })
