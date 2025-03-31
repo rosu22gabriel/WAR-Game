@@ -45,7 +45,7 @@ document.getElementById('draw').addEventListener('click', async() =>
             if (!response.ok)
                 { 
                     const errorText = await response.text();
-                    throw new Error('HTTP error! status: ${response.stats}');
+                    throw new Error('HTTP error! status: ${response.status} - ${errorText}');
                 }
             const result = await response.json();
             console.log("Result data:", result);
@@ -54,7 +54,7 @@ document.getElementById('draw').addEventListener('click', async() =>
             if (result.battle_cards && result.battle_cards.length >= 2){ 
                 console.log("Cards to display:", result.battle_cards);
                 document.getElementById('player1-battle-card').innerHTML = `
-                <img src="/static/cards/${result.battle_cards[1]}" 
+                <img src="/static/cards/${result.battle_cards[0]}" 
                     onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`;
                 document.getElementById('player2-battle-card').innerHTML = `
                 <img src="/static/cards/${result.battle_cards[1]}" 
@@ -77,7 +77,7 @@ document.getElementById('draw').addEventListener('click', async() =>
             console.error('Draw error:', error);
             showError(error.message);
         } finally {
-            drawButton.disable = false;
+            drawButton.disabled = false;
         }
 });
 
@@ -101,7 +101,7 @@ function updateCardDisplay(elementId, cardFilename)
 
     setTimeout(() => {
         container.innerHTML = cardFilename ?
-            '<img src="/static/cards/${cardFilename}" class="card-img" alt="Battle card">' : '';
+            `<img src="/static/cards/${cardFilename}" class="card-img" alt="Battle card">` : '';
         container.classList.remove('card-entering');
     }, 300);
 }
