@@ -361,11 +361,11 @@ def play_round():
     for card in game.battle_cards:
         value = str(card.value).lower()
         suit = str(card.suit).lower()
-    if value == '10':
-        filename = f"{value}_{suit}.png"
-    else:
-        filename = f"{value[0]}_{suit}.png"
-    battle_card_images.append(filename)
+        if value == '10':
+            filename = f"{value}_{suit}.png"
+        else:
+            filename = f"{value[0]}_{suit}.png"
+        battle_card_images.append(filename)
 
     return jsonify({ 
         'p1_count': len(game.player1), 
