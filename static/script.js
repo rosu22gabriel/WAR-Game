@@ -52,25 +52,57 @@ document.getElementById('draw').addEventListener('click', async() =>
             console.log("Result data:", result);
 
 
-            if (result.battle_cards && result.battle_cards.length >= 2){ 
-                // console.log("Cards to display:", result.battle_cards);
-                // document.getElementById('player1-battle-card').innerHTML = `
-                // <img src="/static/cards/${result.battle_cards[0]}" 
-                //     onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`;
-                // document.getElementById('player2-battle-card').innerHTML = `
-                // <img src="/static/cards/${result.battle_cards[1]}" 
-                //     onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`;   
-                updateCardDisplay(
-                    'player1-battle-card', 
-                    `<img src="/static/cards/${result.battle_cards[0]}" 
-                     onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`
-                );
+            // if (result.battle_cards && result.battle_cards.length >= 2){ 
+            //     // console.log("Cards to display:", result.battle_cards);
+            //     // document.getElementById('player1-battle-card').innerHTML = `
+            //     // <img src="/static/cards/${result.battle_cards[0]}" 
+            //     //     onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`;
+            //     // document.getElementById('player2-battle-card').innerHTML = `
+            //     // <img src="/static/cards/${result.battle_cards[1]}" 
+            //     //     onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`;   
+            //     updateCardDisplay(
+            //         'player1-battle-card', 
+            //         `<img src="/static/cards/${result.battle_cards[0]}" 
+            //          onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`
+            //     );
                 
-                updateCardDisplay(
-                    'player2-battle-card', 
-                    `<img src="/static/cards/${result.battle_cards[1]}" 
-                     onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`
-                );
+            //     updateCardDisplay(
+            //         'player2-battle-card', 
+            //         `<img src="/static/cards/${result.battle_cards[1]}" 
+            //          onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`
+            //     );
+            // }
+
+            if (result.battle_cards && result.battle_cards.length >= 2) {
+                console.log("Raw card data from server:", result.battle_cards);
+                
+                // Player 1's card
+                const p1Img = document.createElement('img');
+                p1Img.src = `/static/cards/${result.battle_cards[0]}`;
+                p1Img.alt = "Player 1's card";
+                p1Img.classList.add('card-img');
+                p1Img.onerror = function() {
+                    console.error(`Failed to load: ${this.src}`);
+                    //this.src = '/static/cards/back.png';
+                };
+                
+                // Player 2's card
+                const p2Img = document.createElement('img');
+                p2Img.src = `/static/cards/${result.battle_cards[1]}`;
+                p2Img.alt = "Player 2's card";
+                p2Img.classList.add('card-img');
+                p2Img.onerror = function() {
+                    console.error(`Failed to load: ${this.src}`);
+                    //this.src = '/static/cards/back.png';
+                };
+                
+                // Update displays with animation
+                updateCardDisplay('player1-battle-card', p1Img.outerHTML);
+                updateCardDisplay('player2-battle-card', p2Img.outerHTML);
+                
+                // Debug: Check if elements exist
+                console.log("Player 1 battle card element:", document.getElementById('player1-battle-card'));
+                console.log("Player 2 battle card element:", document.getElementById('player2-battle-card'));
             }
 
 
