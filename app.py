@@ -68,8 +68,16 @@ if not os.path.exists('static/cards'):
 
 def generate_card_image(card):
     print(f"Attempting to generate image for {card.value} of {card.suit}", flush=True)
-    card_name = sanitize_filename(f"{card.value}_{card.suit}.png")
-    filename = f"static/cards/{card_name.lower()}"
+    value = str(card.value).lower()
+    suit = str(card.suit).lower()
+
+    if value == '10':
+        filename = f"static/cards/{value}_{suit}.png"
+    else:
+        filename = f"static/cards/{value[0]}_{suit}.png"
+    
+    sanitize_filename(filename)
+
     if not os.path.exists(filename):
         ascii_card = card.generate_ascii_card()
         print(f"Generated image for {card.value} of {card.suit}:\n {ascii_card}", flush=True)
