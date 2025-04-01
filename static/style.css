@@ -64,6 +64,9 @@ button:hover {
 }
 
 .card-img {
+    width: 120px;
+    height: 180px;
+    object-fit: contain;
     transition: transform 0.5s ease-in-out;
 }
 
