@@ -69,7 +69,7 @@ if not os.path.exists('static/cards'):
 def generate_card_image(card):
     print(f"Attempting to generate image for {card.value} of {card.suit}", flush=True)
     card_name = sanitize_filename(f"{card.value}_{card.suit}.png")
-    filename = f"static/cards/{card_name}"
+    filename = f"static/cards/{card_name.lower()}"
     if not os.path.exists(filename):
         ascii_card = card.generate_ascii_card()
         print(f"Generated image for {card.value} of {card.suit}:\n {ascii_card}", flush=True)
@@ -173,109 +173,109 @@ class WarGame:
     def game_over(self):
         return len(self.player1) == 0 or len(self.player2) == 0
 
-def play_round(self):
-    if self.game_over():
-        return
+    def play_round(self):
+        if self.game_over():
+            return
 
-    try:
-        # Draw initial cards
-        p1_card = self.player1.popleft()
-        p2_card = self.player2.popleft()
-        self.battle_cards = [p1_card, p2_card]
+        try:
+            # Draw initial cards
+            p1_card = self.player1.popleft()
+            p2_card = self.player2.popleft()
+            self.battle_cards = [p1_card, p2_card]
+            self.pot.extend(self.battle_cards)
+            
+            self.log(f"Player 1 plays {p1_card.value} of {p1_card.suit}")
+            self.log(f"Player 2 plays {p2_card.value} of {p1_card.suit}")
+
+            # Compare card values
+            if CARD_VALUES[p1_card.value] > CARD_VALUES[p2_card.value]:
+                self.resolve_round(winner=1)
+            elif CARD_VALUES[p2_card.value] > CARD_VALUES[p1_card.value]:
+                self.resolve_round(winner=2)
+            else:
+                # Cards are equal - war begins
+                self.start_war(p1_card.value)
+                
+        except IndexError:
+            self.handle_game_over()
+        
+        # Debug output
+        print("Round result:", {
+            'p1_count': len(self.player1),
+            'p2_count': len(self.player2),
+            'battle_cards': [f"{card.value}_{card.suit}.png" for card in self.battle_cards]
+        }, flush=True)
+
+    def start_war(self, initial_card_value):
+        """Handle a war scenario when cards of equal value are drawn."""
+        self.log(f"\n⚔️ WAR! Both players drew {initial_card_value}")
+        
+        # Determine how many cards to draw based on the initial card value
+        war_cards_to_draw = 0
+        if initial_card_value in ['J', 'Q', 'K', 'A']:
+            war_cards_to_draw = {
+                'J': 1,
+                'Q': 2,
+                'K': 3,
+                'A': 4
+            }[initial_card_value]
+        else:
+            war_cards_to_draw = 1  # For non-face cards
+        
+        # Each player adds the required number of face-down cards to the pot
+        for _ in range(war_cards_to_draw):
+            if len(self.player1) > 0:
+                self.pot.append(self.player1.popleft())
+            if len(self.player2) > 0:
+                self.pot.append(self.player2.popleft())
+        
+        # Check if players have cards left for the final comparison
+        if len(self.player1) == 0 or len(self.player2) == 0:
+            self.handle_game_over()
+            return
+        
+        # Draw final comparison cards
+        p1_war_card = self.player1.popleft()
+        p2_war_card = self.player2.popleft()
+        self.battle_cards = [p1_war_card, p2_war_card]
         self.pot.extend(self.battle_cards)
         
-        self.log(f"Player 1 plays {p1_card.value} of {p1_card.suit}")
-        self.log(f"Player 2 plays {p2_card.value} of {p1_card.suit}")
-
-        # Compare card values
-        if CARD_VALUES[p1_card.value] > CARD_VALUES[p2_card.value]:
+        self.log(f"Player 1 reveals: {p1_war_card.value} of {p1_war_card.suit}")
+        self.log(f"Player 2 reveals: {p2_war_card.value} of {p2_war_card.suit}")
+        
+        # Compare the war cards
+        if CARD_VALUES[p1_war_card.value] > CARD_VALUES[p2_war_card.value]:
             self.resolve_round(winner=1)
-        elif CARD_VALUES[p2_card.value] > CARD_VALUES[p1_card.value]:
+        elif CARD_VALUES[p2_war_card.value] > CARD_VALUES[p1_war_card.value]:
             self.resolve_round(winner=2)
         else:
-            # Cards are equal - war begins
-            self.start_war(p1_card.value)
-            
-    except IndexError:
-        self.handle_game_over()
-    
-    # Debug output
-    print("Round result:", {
-        'p1_count': len(self.player1),
-        'p2_count': len(self.player2),
-        'battle_cards': [f"{card.value}_{card.suit}.png" for card in self.battle_cards]
-    }, flush=True)
+            # Another war if tied again
+            self.start_war(p1_war_card.value)
 
-def start_war(self, initial_card_value):
-    """Handle a war scenario when cards of equal value are drawn."""
-    self.log(f"\n⚔️ WAR! Both players drew {initial_card_value}")
-    
-    # Determine how many cards to draw based on the initial card value
-    war_cards_to_draw = 0
-    if initial_card_value in ['J', 'Q', 'K', 'A']:
-        war_cards_to_draw = {
-            'J': 1,
-            'Q': 2,
-            'K': 3,
-            'A': 4
-        }[initial_card_value]
-    else:
-        war_cards_to_draw = 1  # For non-face cards
-    
-    # Each player adds the required number of face-down cards to the pot
-    for _ in range(war_cards_to_draw):
-        if len(self.player1) > 0:
-            self.pot.append(self.player1.popleft())
-        if len(self.player2) > 0:
-            self.pot.append(self.player2.popleft())
-    
-    # Check if players have cards left for the final comparison
-    if len(self.player1) == 0 or len(self.player2) == 0:
-        self.handle_game_over()
-        return
-    
-    # Draw final comparison cards
-    p1_war_card = self.player1.popleft()
-    p2_war_card = self.player2.popleft()
-    self.battle_cards = [p1_war_card, p2_war_card]
-    self.pot.extend(self.battle_cards)
-    
-    self.log(f"Player 1 reveals: {p1_war_card.value} of {p1_war_card.suit}")
-    self.log(f"Player 2 reveals: {p2_war_card.value} of {p2_war_card.suit}")
-    
-    # Compare the war cards
-    if CARD_VALUES[p1_war_card.value] > CARD_VALUES[p2_war_card.value]:
-        self.resolve_round(winner=1)
-    elif CARD_VALUES[p2_war_card.value] > CARD_VALUES[p1_war_card.value]:
-        self.resolve_round(winner=2)
-    else:
-        # Another war if tied again
-        self.start_war(p1_war_card.value)
+    def resolve_round(self, winner):
+        """Award all cards in the pot to the winning player."""
+        winner_deck = self.player1 if winner == 1 else self.player2
+        random.shuffle(self.pot)  # Shuffle before adding to winner's deck
+        winner_deck.extend(self.pot)
+        self.log(f"Player {winner} wins the round and {len(self.pot)} cards!")
+        self.pot.clear()
+        self.battle_cards = []
+        self.check_winner()
 
-def resolve_round(self, winner):
-    """Award all cards in the pot to the winning player."""
-    winner_deck = self.player1 if winner == 1 else self.player2
-    random.shuffle(self.pot)  # Shuffle before adding to winner's deck
-    winner_deck.extend(self.pot)
-    self.log(f"Player {winner} wins the round and {len(self.pot)} cards!")
-    self.pot.clear()
-    self.battle_cards = []
-    self.check_winner()
+    def handle_game_over(self):
+        """Handle game over when a player runs out of cards."""
+        if len(self.player1) == 0:
+            self.log("\n🎉 Player 2 wins the game!")
+        elif len(self.player2) == 0:
+            self.log("\n🎉 Player 1 wins the game!")
+        self._game_over = True
 
-def handle_game_over(self):
-    """Handle game over when a player runs out of cards."""
-    if len(self.player1) == 0:
-        self.log("\n🎉 Player 2 wins the game!")
-    elif len(self.player2) == 0:
-        self.log("\n🎉 Player 1 wins the game!")
-    self._game_over = True
-
-def check_winner(self):
-    """Check if a player has won the game."""
-    if len(self.player1) == 0:
-        self.log("\n🏆 PLAYER 2 WINS THE GAME!")
-    elif len(self.player2) == 0:
-        self.log("\n🏆 PLAYER 1 WINS THE GAME!")
+    def check_winner(self):
+        """Check if a player has won the game."""
+        if len(self.player1) == 0:
+            self.log("\n🏆 PLAYER 2 WINS THE GAME!")
+        elif len(self.player2) == 0:
+            self.log("\n🏆 PLAYER 1 WINS THE GAME!")
     # def play_round(self):
     #     if self.game_over():
     #         return    
@@ -357,14 +357,21 @@ def play_round():
         session.modified = True
         print("Game state saved")
 
+    battle_card_images = []
+    for card in game.battle_cards:
+        value = str(card.value).lower()
+        suit = str(card.suit).lower()
+    if value == '10':
+        filename = f"{value}_{suit}.png"
+    else:
+        filename = f"{value[0]}_{suit}.png"
+    battle_card_images.append(filename)
+
     return jsonify({ 
         'p1_count': len(game.player1), 
         'p2_count': len(game.player2),
         'log': "<br>".join(game.game_log[-5:]),
-        'battle_cards': [
-            f"{card.value}_{card.suit}.png"
-            for card in game.battle_cards
-        ]
+        'battle_cards': battle_card_images
     })
 
 @app.route("/reset", methods=['POST'])
