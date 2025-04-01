@@ -74,36 +74,45 @@ document.getElementById('draw').addEventListener('click', async() =>
             // }
 
             if (result.battle_cards && result.battle_cards.length >= 2) {
-                console.log("Raw card data from server:", result.battle_cards);
+                // Clear previous cards
+                const p1Container = document.getElementById('player1-battle-card');
+                const p2Container = document.getElementById('player2-battle-card');
+                p1Container.innerHTML = '';
+                p2Container.innerHTML = '';
                 
-                // Player 1's card
-                const p1Img = document.createElement('img');
+                // Create image elements
+                const p1Img = new Image();
+                const p2Img = new Image();
+                
+                // Set image sources
                 p1Img.src = `/static/cards/${result.battle_cards[0]}`;
-                p1Img.alt = "Player 1's card";
-                p1Img.classList.add('card-img');
-                p1Img.onerror = function() {
-                    console.error(`Failed to load: ${this.src}`);
-                    //this.src = '/static/cards/back.png';
-                };
-                
-                // Player 2's card
-                const p2Img = document.createElement('img');
                 p2Img.src = `/static/cards/${result.battle_cards[1]}`;
-                p2Img.alt = "Player 2's card";
-                p2Img.classList.add('card-img');
-                p2Img.onerror = function() {
-                    console.error(`Failed to load: ${this.src}`);
-                    //this.src = '/static/cards/back.png';
+                
+                // Add classes
+                p1Img.className = 'card-img';
+                p2Img.className = 'card-img';
+                
+                // Error handling
+                p1Img.onerror = () => {
+                    console.error(`Failed to load: ${p1Img.src}`);
+                    p1Img.src = '/static/cards/back.png';
+                };
+                p2Img.onerror = () => {
+                    console.error(`Failed to load: ${p2Img.src}`);
+                    p2Img.src = '/static/cards/back.png';
                 };
                 
-                // Update displays with animation
-                updateCardDisplay('player1-battle-card', p1Img.outerHTML);
-                updateCardDisplay('player2-battle-card', p2Img.outerHTML);
+                // Add to DOM
+                p1Container.appendChild(p1Img);
+                p2Container.appendChild(p2Img);
                 
-                // Debug: Check if elements exist
-                console.log("Player 1 battle card element:", document.getElementById('player1-battle-card'));
-                console.log("Player 2 battle card element:", document.getElementById('player2-battle-card'));
+                // Debug output
+                console.log('Player 1 container:', p1Container);
+                console.log('Player 2 container:', p2Container);
+                console.log('Player 1 image:', p1Img);
+                console.log('Player 2 image:', p2Img);
             }
+            
 
 
             document.getElementById('player1-cards').textContent = result.p1_count;
@@ -141,53 +150,6 @@ document.getElementById('reset').addEventListener('click', async () =>
     }
 });
 
-
-function updateCardDisplay(elementId, cardHTML)
-{
-    // const container = document.getElementById(elementId);
-    // container.classList.add('card-entering');
-
-    // // setTimeout(() => {
-    // //     container.innerHTML = cardFilename ?
-    // //         `<img src="/static/cards/${cardFilename}" class="card-img" alt="Battle card">` : '';
-    // //     container.classList.remove('card-entering');
-    // // }, 300);
-    // setTimeout(() => {
-    //     container.innerHTML = cardHTML || '';
-    //     container.classList.remove('card-entering');
-    // }, 300);
-    // Replace your current updateCardDisplay calls with this:
-if (result.battle_cards && result.battle_cards.length >= 2) {
-    console.log("Card data received:", result.battle_cards);
-    
-    // Immediate DOM update (no animation delay)
-    document.getElementById('player1-battle-card').innerHTML = `
-        <img src="/static/cards/${result.battle_cards[0]}" 
-             class="card-img"
-             onerror="this.onerror=null;this.src='/static/cards/back.png'">`;
-    
-    document.getElementById('player2-battle-card').innerHTML = `
-        <img src="/static/cards/${result.battle_cards[1]}" 
-             class="card-img"
-             onerror="this.onerror=null;this.src='/static/cards/back.png'">`;
-    
-    // Debug verification
-    const p1Img = document.querySelector('#player1-battle-card img');
-    const p2Img = document.querySelector('#player2-battle-card img');
-    console.log("Player 1 img element:", p1Img);
-    console.log("Player 2 img element:", p2Img);
-    
-    if (p1Img) {
-        p1Img.onload = () => console.log("P1 image loaded");
-        p1Img.onerror = () => console.log("P1 image failed");
-    }
-    if (p2Img) {
-        p2Img.onload = () => console.log("P2 image loaded");
-        p2Img.onerror = () => console.log("P2 image failed");
-    }
-}
-
-}
 
 function updateLog(message) {
     const logElement = document.getElementById('result');
