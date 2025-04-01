@@ -166,6 +166,12 @@ class WarGame:
         game.battle_cards = [Card.from_dict(c) for c in data.get('battle_cards', [])]
         return game
 
+    def log(self, message):
+        self.game_log.append(message)
+
+
+    def game_over(self):
+        return len(self.player1) == 0 or len(self.player2) == 0
 
 def play_round(self):
     if self.game_over():
@@ -316,12 +322,12 @@ def check_winner(self):
     #         self.log("\n PLAYER 2 WINS BY DEFAULT ")
 
 
-    def log(self, message):
-        self.game_log.append(message)
+    # def log(self, message):
+    #     self.game_log.append(message)
 
 
-    def game_over(self):
-        return len(self.player1) == 0 or len(self.player2) == 0
+    # def game_over(self):
+    #     return len(self.player1) == 0 or len(self.player2) == 0
 
 
 @app.route("/")
