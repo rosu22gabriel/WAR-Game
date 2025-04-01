@@ -229,7 +229,7 @@ def home():
 @app.route("/play", methods=["POST"])
 def play_round():
     game_data = session.get('game', {})
-    if not game_data:
+    if not game_data or not isinstance(game_data, dict) or 'player1' not in game_data:
         game = WarGame()
         print("New game initialized")
     else:
@@ -239,6 +239,9 @@ def play_round():
     if not game.game_over():
         print("Playing round...")
         game.play_round()
+        print(f"After play_round(): P1 = cards ={len(game.player1)}, P2 card s={len(game.player2)}")
+        print(f"Battle cards: {game.battle_cards}")
+        print(f"Game log: {game.game_log[-1]}")
         session['game'] = game.to_dict()
         session.modified = True
         print("Game state saved")
