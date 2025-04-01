@@ -144,18 +144,49 @@ document.getElementById('reset').addEventListener('click', async () =>
 
 function updateCardDisplay(elementId, cardHTML)
 {
-    const container = document.getElementById(elementId);
-    container.classList.add('card-entering');
+    // const container = document.getElementById(elementId);
+    // container.classList.add('card-entering');
 
+    // // setTimeout(() => {
+    // //     container.innerHTML = cardFilename ?
+    // //         `<img src="/static/cards/${cardFilename}" class="card-img" alt="Battle card">` : '';
+    // //     container.classList.remove('card-entering');
+    // // }, 300);
     // setTimeout(() => {
-    //     container.innerHTML = cardFilename ?
-    //         `<img src="/static/cards/${cardFilename}" class="card-img" alt="Battle card">` : '';
+    //     container.innerHTML = cardHTML || '';
     //     container.classList.remove('card-entering');
     // }, 300);
-    setTimeout(() => {
-        container.innerHTML = cardHTML || '';
-        container.classList.remove('card-entering');
-    }, 300);
+    // Replace your current updateCardDisplay calls with this:
+if (result.battle_cards && result.battle_cards.length >= 2) {
+    console.log("Card data received:", result.battle_cards);
+    
+    // Immediate DOM update (no animation delay)
+    document.getElementById('player1-battle-card').innerHTML = `
+        <img src="/static/cards/${result.battle_cards[0]}" 
+             class="card-img"
+             onerror="this.onerror=null;this.src='/static/cards/back.png'">`;
+    
+    document.getElementById('player2-battle-card').innerHTML = `
+        <img src="/static/cards/${result.battle_cards[1]}" 
+             class="card-img"
+             onerror="this.onerror=null;this.src='/static/cards/back.png'">`;
+    
+    // Debug verification
+    const p1Img = document.querySelector('#player1-battle-card img');
+    const p2Img = document.querySelector('#player2-battle-card img');
+    console.log("Player 1 img element:", p1Img);
+    console.log("Player 2 img element:", p2Img);
+    
+    if (p1Img) {
+        p1Img.onload = () => console.log("P1 image loaded");
+        p1Img.onerror = () => console.log("P1 image failed");
+    }
+    if (p2Img) {
+        p2Img.onload = () => console.log("P2 image loaded");
+        p2Img.onerror = () => console.log("P2 image failed");
+    }
+}
+
 }
 
 function updateLog(message) {
