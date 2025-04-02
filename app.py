@@ -191,8 +191,8 @@ class WarGame:
             # Draw initial cards
             p1_card = self.player1.popleft()
             p2_card = self.player2.popleft()
-            self.battle_cards.extend = ([p1_card, p2_card])
-            self.pot.extend([p1_card, p2_card])
+            self.battle_cards.extend = [p1_card, p2_card]
+            self.pot.extend(self.battle_cards)
             
             self.log(f"Player 1 plays {p1_card.value} of {p1_card.suit}")
             self.log(f"Player 2 plays {p2_card.value} of {p1_card.suit}")
