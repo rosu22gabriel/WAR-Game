@@ -365,21 +365,30 @@ def play_round():
         session.modified = True
         print("Game state saved")
 
-    battle_card_images = []
-    for card in game.battle_cards:
+    
+    for card in game.player1:
         value = str(card.value).lower()
         suit = str(card.suit).lower()
         if value == '10':
             filename = f"{value}_{suit}.png"
         else:
             filename = f"{value[0]}_{suit}.png"
-        battle_card_images.append(filename)
+        p1_battle_card_image = filename
+
+    for card in game.player2:
+        value = str(card.value).lower()
+        suit = str(card.suit).lower()
+        if value == '10':
+            filename = f"{value}_{suit}.png"
+        else:
+            filename = f"{value[0]}_{suit}.png"
+        p2_battle_card_image = filename
 
     return jsonify({ 
         'p1_count': len(game.player1), 
         'p2_count': len(game.player2),
         'log': "<br>".join(game.game_log[-5:]),
-        'battle_cards': battle_card_images
+        'battle_cards': {p1_battle_card_image, p2_battle_card_image}
     })
 
 @app.route("/reset", methods=['POST'])
