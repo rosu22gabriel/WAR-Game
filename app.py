@@ -191,7 +191,7 @@ class WarGame:
             # Draw initial cards
             p1_card = self.player1.popleft()
             p2_card = self.player2.popleft()
-            self.battle_cards.extend = [p1_card, p2_card]
+            self.battle_cards = [p1_card, p2_card]
             self.pot.extend(self.battle_cards)
             
             self.log(f"Player 1 plays {p1_card.value} of {p1_card.suit}")
@@ -232,12 +232,17 @@ class WarGame:
         else:
             war_cards_to_draw = 1  # For non-face cards
         
-        # Each player adds the required number of face-down cards to the pot
+        # Players alternate revealing cards
         for _ in range(war_cards_to_draw):
             if len(self.player1) > 0:
-                self.pot.append(self.player1.popleft())
+                p1_war_card = self.player1.popleft()
+                self.pot.append(p1_war_card)
+                self.battle_cards.append(p1_war_card)
             if len(self.player2) > 0:
-                self.pot.append(self.player2.popleft())
+                p2_war_card = self.player2.popleft()
+                self.pot.append(p2_war_card)
+                self.battle_cards.append(p2_war_card)
+                
         
         # Check if players have cards left for the final comparison
         if len(self.player1) == 0 or len(self.player2) == 0:
