@@ -185,12 +185,14 @@ class WarGame:
         if self.game_over():
             return
 
+        self.battle_cards = []
+
         try:
             # Draw initial cards
             p1_card = self.player1.popleft()
             p2_card = self.player2.popleft()
-            self.battle_cards = [p1_card, p2_card]
-            self.pot.extend(self.battle_cards)
+            self.battle_cards.extend = ([p1_card, p2_card])
+            self.pot.extend([p1_card, p2_card])
             
             self.log(f"Player 1 plays {p1_card.value} of {p1_card.suit}")
             self.log(f"Player 2 plays {p2_card.value} of {p1_card.suit}")
@@ -267,7 +269,6 @@ class WarGame:
         winner_deck.extend(self.pot)
         self.log(f"Player {winner} wins the round and {len(self.pot)} cards!")
         self.pot.clear()
-        self.battle_cards = []
         self.check_winner()
 
     def handle_game_over(self):
@@ -365,30 +366,19 @@ def play_round():
         session.modified = True
         print("Game state saved")
 
+    card_images = []
+    for card in game.battle_cards[-2:]:  # Get most recent two cards
+        value = str(card.value).lower()
+        suit = str(card.suit).lower()
+        filename = f"{value}_{suit}.png" if value == '10' else f"{value[0]}_{suit}.png"
+        card_images.append(filename)
     
-    for card in game.player1:
-        value = str(card.value).lower()
-        suit = str(card.suit).lower()
-        if value == '10':
-            filename = f"{value}_{suit}.png"
-        else:
-            filename = f"{value[0]}_{suit}.png"
-        p1_battle_card_image = filename
-
-    for card in game.player2:
-        value = str(card.value).lower()
-        suit = str(card.suit).lower()
-        if value == '10':
-            filename = f"{value}_{suit}.png"
-        else:
-            filename = f"{value[0]}_{suit}.png"
-        p2_battle_card_image = filename
 
     return jsonify({ 
         'p1_count': len(game.player1), 
         'p2_count': len(game.player2),
         'log': "<br>".join(game.game_log[-5:]),
-        'battle_cards': {p1_battle_card_image, p2_battle_card_image}
+        'battle_cards': card_images
     })
 
 @app.route("/reset", methods=['POST'])
