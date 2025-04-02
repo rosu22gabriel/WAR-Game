@@ -63,12 +63,12 @@ button:hover {
     margin-top: 20px; 
 }
 
-.card-img {
+/* .card-img {
     width: 120px;
     height: 180px;
     object-fit: contain;
     /* transition: transform 0.5s ease-in-out; */
-}
+
 
 /* .card-entering {
     transform: rotateY(0deg) scale(1.2);

@@ -89,18 +89,18 @@ document.getElementById('draw').addEventListener('click', async() =>
                 p2Img.src = `/static/cards/${result.battle_cards[1]}`;
                 
                 // Add classes
-                p1Img.className = 'card-img';
-                p2Img.className = 'card-img';
+                p1Img.className = 'battle-card';
+                p2Img.className = 'battle-card';
                 
                 // Error handling
-                p1Img.onerror = () => {
-                    console.error(`Failed to load: ${p1Img.src}`);
-                    p1Img.src = '/static/cards/back.png';
-                };
-                p2Img.onerror = () => {
-                    console.error(`Failed to load: ${p2Img.src}`);
-                    p2Img.src = '/static/cards/back.png';
-                };
+                // p1Img.onerror = () => {
+                //     console.error(`Failed to load: ${p1Img.src}`);
+                //     p1Img.src = '/static/cards/back.png';
+                // };
+                // p2Img.onerror = () => {
+                //     console.error(`Failed to load: ${p2Img.src}`);
+                //     p2Img.src = '/static/cards/back.png';
+                // };
                 
                 // Add to DOM
                 p1Container.appendChild(p1Img);
