@@ -1,13 +1,3 @@
-// const elements = {
-//     drawBtn: document.getElementById('draw-btn'),
-//     resetBtn: document.getElementById('reset-btn'),
-//     player1Card: document.getElementById('player1-btn'),
-//     player2Card: document.getElementById('player2-btn'),
-//     player1Count: document.getElementById('player1-count'),
-//     player2Count: document.getElementById('player2-count'),
-//     gameLog: document.getElementById('game-log'),
-// }
-
 document.addEventListener('DOMContentLoaded', async() => 
 {   
     await updateGameState();
@@ -51,27 +41,6 @@ document.getElementById('draw').addEventListener('click', async() =>
             const result = await response.json();
             console.log("Result data:", result);
 
-
-            // if (result.battle_cards && result.battle_cards.length >= 2){ 
-            //     // console.log("Cards to display:", result.battle_cards);
-            //     // document.getElementById('player1-battle-card').innerHTML = `
-            //     // <img src="/static/cards/${result.battle_cards[0]}" 
-            //     //     onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`;
-            //     // document.getElementById('player2-battle-card').innerHTML = `
-            //     // <img src="/static/cards/${result.battle_cards[1]}" 
-            //     //     onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`;   
-            //     updateCardDisplay(
-            //         'player1-battle-card', 
-            //         `<img src="/static/cards/${result.battle_cards[0]}" 
-            //          onerror="console.error('Failed to load: ${result.battle_cards[0]}')">`
-            //     );
-                
-            //     updateCardDisplay(
-            //         'player2-battle-card', 
-            //         `<img src="/static/cards/${result.battle_cards[1]}" 
-            //          onerror="console.error('Failed to load: ${result.battle_cards[1]}')">`
-            //     );
-            // }
 
             if (result.battle_cards && result.battle_cards.length >= 2) {
                 // Clear previous cards

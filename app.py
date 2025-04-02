@@ -109,11 +109,6 @@ def generate_card_image(card):
                   fill=(255, 0, 0) if card.suit in ["Hearts", "Diamonds"] else (0, 0, 0) )
 
 
-        #y_offset = 10
-        #for line in ascii_card.split("\n"):
-            #draw.text((10, y_offset), line, font=font, fill=(0, 0, 0))
-            #y_offset += 20
-
         rotated_value = Image.new('RGBA', (30, 30))
         rotated_draw = ImageDraw.Draw(rotated_value)
         rotated_draw.text((0, 0), str(card.value), font=value_font, fill=(0, 0, 0))
@@ -290,58 +285,6 @@ class WarGame:
             self.log("\n🏆 PLAYER 2 WINS THE GAME!")
         elif len(self.player2) == 0:
             self.log("\n🏆 PLAYER 1 WINS THE GAME!")
-    # def play_round(self):
-    #     if self.game_over():
-    #         return    
-
-    #     try: 
-    #         p1_card = self.player1.popleft()
-    #         p2_card = self.player2.popleft()
-    #         self.battle_cards = [p1_card, p2_card]
-    #         self.pot.extend(self.battle_cards)
-    #         self.log(f"Player 1 plays {p1_card.value} of {p1_card.suit}")
-    #         self.log(f"Player 2 plays {p2_card.value} of {p2_card.suit}")
-
-    #         if CARD_VALUES[p1_card.value] > CARD_VALUES[p2_card.value]:
-    #             self.resolve_round(winner = 1)
-    #         elif CARD_VALUES[p2_card.value] > CARD_VALUES[p1_card.value]:
-    #             self.resolve_round(winner = 2)
-    #         else: 
-    #             self.start_war(p1_card.value)
-    #     except IndexError:
-    #         self.handle_game_over()
-    #     print("Sent response:", { 
-    #         'p1_count': len(self.player1),
-    #         'p2_count': len(self.player2),
-    #         'battle_cards': [f"{card.value}_{card.suit}.png"
-    #                          for card in self.battle_cards]
-    #     }, flush=True)
-        
-
-    
-    # def resolve_round(self, winner):
-    #     winner_deck = self.player1 if winner == 1 else self.player2
-    #     random.shuffle(self.pot)
-    #     winner_deck.extend(self.pot)
-    #     self.log(f"\nPlayer {winner} wins the round")
-    #     self.pot.clear()
-    #     self.battle_cards = []
-    #     self.check_winner()
-
-
-    # def check_winner(self):
-    #     if len(self.player1) == 0:
-    #         self.log("\n PLAYER 1 WINS THE GAME! ")
-    #     elif len(self.player2) == 0:
-    #         self.log("\n PLAYER 2 WINS BY DEFAULT ")
-
-
-    # def log(self, message):
-    #     self.game_log.append(message)
-
-
-    # def game_over(self):
-    #     return len(self.player1) == 0 or len(self.player2) == 0
 
 
 @app.route("/")
