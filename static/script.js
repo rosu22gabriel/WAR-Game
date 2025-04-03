@@ -19,6 +19,26 @@ async function updateGameState(){
     }
 }
 
+function updateStacks(p1_count, p2_count)
+{ 
+    const p1Stack = document.querySelector('.player1 .card_stack');
+    const p2Stack = document.querySelector('.player2 .card_stack');
+    
+    if (p1Stack && p2Stack){ 
+        const getStackImage = (count) =>
+        { 
+            if (count <= 1) return 'stack_1';
+            if (count <= 5) return 'stack_2';
+            if (count <= 10) return 'stack_3';
+            if (count <= 15) return 'stack_4';
+            return 'stack_5';
+        }
+    };
+
+    p1Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p1_count)}.png')`;
+    p2Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p2_count)}.png')`;
+}
+
 document.getElementById('draw').addEventListener('click', async() =>
 { 
     const drawButton = document.getElementById('draw');
@@ -115,6 +135,7 @@ document.getElementById('reset').addEventListener('click', async () =>
     try {
         const response = await fetch('/reset', {method: 'POST'});
         if (!response.ok) throw new Error('Reset failed');
+        updateStacks(26, 26);
         location.reload();
     } catch (error){ 
         console.error('Reset error', error);
@@ -126,21 +147,4 @@ function updateLog(message) {
     const logElement = document.getElementById('result');
     logElement.innerHTML = message;
     logElement.scrollTop = logElement.scrollHeight;
-}
-
-function updateStacks(p1_count, p2_count)
-{ 
-    const p1Stack = document.querySelector('.player1 .card_stack');
-    const p2Stack = document.querySelector('.player2 .card_stack');
-    const getStackImage = (count) =>
-    { 
-        if (count <= 1) return 'stack_1';
-        if (count <= 5) return 'stack_2';
-        if (count <= 10) return 'stack_3';
-        if (count <= 15) return 'stack_4';
-        return 'stack_5';
-    };
-
-    p1Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p1_count)}.png')`;
-    p2Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p2_count)}.png')`;
 }
