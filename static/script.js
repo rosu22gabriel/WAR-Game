@@ -1,21 +1,34 @@
-function updateStacks(p1_count, p2_count)
-{ 
-    const p1Stack = document.querySelector('.player1 .card_stack');
-    const p2Stack = document.querySelector('.player2 .card_stack');
-    
-        const getStackImage = (count) =>
-        { 
-            if (count >= 0 && count <=1) return 'stack_1';
+function updateStacks(p1_count, p2_count) { 
+    try {
+        const p1Stack = document.querySelector('.player1 .card_stack');
+        const p2Stack = document.querySelector('.player2 .card_stack');
+        
+        const getStackImage = (count) => { 
+            count = parseInt(count) || 0; // Ensure it's a number
+            if (count <= 1) return 'stack_1';
             if (count <= 5) return 'stack_2';
             if (count <= 10) return 'stack_3';
             if (count <= 15) return 'stack_4';
             return 'stack_5';
         }
 
-    p1Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p1_count)}.png')`;
-    p2Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p2_count)}.png')`;
+        // Add fallback images and verify paths
+        const p1fb = `/static/stacks/${getStackImage(p1_count)}.png`;
+        const p2fb = `/static/stacks/${getStackImage(p2_count)}.png`;
+        
+        console.log('Setting stack images:', { p1Image, p2Image });
+        
+        p1Stack.style.backgroundImage = `url('${p1fb}')`;
+        p2Stack.style.backgroundImage = `url('${p2fb}')`;
+        
+        // Verify elements exist
+        if (!p1Stack || !p2Stack) {
+            throw new Error('Stack elements not found in DOM');
+        }
+    } catch (error) {
+        console.error('Error in updateStacks:', error);
+    }
 }
-
 
 
 document.addEventListener('DOMContentLoaded', async() => 
@@ -90,16 +103,6 @@ document.getElementById('draw').addEventListener('click', async() =>
                 p1Img.className = 'battle-card';
                 p2Img.className = 'battle-card';
                 
-                // Error handling
-                // p1Img.onerror = () => {
-                //     console.error(`Failed to load: ${p1Img.src}`);
-                //     p1Img.src = '/static/cards/back.png';
-                // };
-                // p2Img.onerror = () => {
-                //     console.error(`Failed to load: ${p2Img.src}`);
-                //     p2Img.src = '/static/cards/back.png';
-                // };
-                
                 // Add to DOM
                 p1Container.appendChild(p1Img);
                 p2Container.appendChild(p2Img);
@@ -111,15 +114,10 @@ document.getElementById('draw').addEventListener('click', async() =>
                 console.log('Player 2 image:', p2Img);
             }
             
-
-
             document.getElementById('player1-cards').textContent = result.p1_count;
             document.getElementById('player2-cards').textContent = result.p2_count;
 
             console.log("Draw completed successfully");
-
-            // const logElement = document.getElementById('result');
-            // logElement.innerHTML = result.log;
 
             updateLog(result.log);
 
