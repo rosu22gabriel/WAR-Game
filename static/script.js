@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async() => 
 {   
     await updateGameState();
+    updateStacks(26, 26);
 });
 
 async function updateGameState(){ 
@@ -135,7 +136,7 @@ function updateStacks(p1_count, p2_count)
         if (count <= 5) return 'stack_2';
         if (count <= 10) return 'stack_3';
         if (count <= 15) return 'stack_4';
-        return 'stack-5';
+        return 'stack_5';
     };
 
     const p1Stack = document.querySelector('.player1 .card_stack');
