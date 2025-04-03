@@ -22,7 +22,20 @@ body {
     align-items: center;
 }
 
-.card-back, .battle-card {
+.card_stack{ 
+    background-color: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 251px;
+    height: 312px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 20px auto;
+}
+
+.battle-card {
     background-color: cover;
     background-position: center;
     background-repeat: no-repeat;

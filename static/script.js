@@ -41,6 +41,7 @@ document.getElementById('draw').addEventListener('click', async() =>
             const result = await response.json();
             console.log("Result data:", result);
 
+            updateStacks(result.p1_count, result.p2_count);
 
             if (result.battle_cards && result.battle_cards.length >= 2) {
                 // Clear previous cards
@@ -124,4 +125,22 @@ function updateLog(message) {
     const logElement = document.getElementById('result');
     logElement.innerHTML = message;
     logElement.scrollTop = logElement.scrollHeight;
+}
+
+function updateStacks(p1_count, p2_count)
+{ 
+    const getStackImage = (count) =>
+    { 
+        if (count <= 1) return 'stack_1';
+        if (count <= 5) return 'stack_2';
+        if (count <= 10) return 'stack_3';
+        if (count <= 15) return 'stack_4';
+        return 'stack-5';
+    };
+
+    const p1Stack = document.querySelector('.player1 .card_stack');
+    p1Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p1_count)}.png')`;
+    
+    const p2Stack = document.querySelector('.player2 .card_stack');
+    p2Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p2_count)}.png')`;
 }

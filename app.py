@@ -326,8 +326,18 @@ def play_round():
         'p1_count': len(game.player1), 
         'p2_count': len(game.player2),
         'log': "<br>".join(game.game_log[-5:]),
-        'battle_cards': card_images
+        'battle_cards': card_images,
+        'p1_stack': get_stack_level(len(game.player1)),
+        'p2_stack': get_stack_level(len(game.player2))
     })
+
+def get_stack_level(count):
+    if count <= 1: return 1
+    if count <= 5: return 2
+    if count <= 10: return 3
+    if count <= 15: return 4
+    return 5
+
 
 @app.route("/reset", methods=['POST'])
 def reset_game():
