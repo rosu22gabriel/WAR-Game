@@ -130,6 +130,8 @@ function updateLog(message) {
 
 function updateStacks(p1_count, p2_count)
 { 
+    const p1Stack = document.querySelector('.player1 .card_stack');
+    const p2Stack = document.querySelector('.player2 .card_stack');
     const getStackImage = (count) =>
     { 
         if (count <= 1) return 'stack_1';
@@ -139,9 +141,6 @@ function updateStacks(p1_count, p2_count)
         return 'stack_5';
     };
 
-    const p1Stack = document.querySelector('.player1 .card_stack');
     p1Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p1_count)}.png')`;
-    
-    const p2Stack = document.querySelector('.player2 .card_stack');
     p2Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p2_count)}.png')`;
 }
