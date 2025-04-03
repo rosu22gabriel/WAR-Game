@@ -16,7 +16,7 @@ function updateStacks(p1_count, p2_count) {
         const p1fb = `/static/stacks/${getStackImage(p1_count)}.png`;
         const p2fb = `/static/stacks/${getStackImage(p2_count)}.png`;
         
-        console.log('Setting stack images:', { p1Image, p2Image });
+        console.log('Setting stack images:', { p1fb, p2fb });
         
         p1Stack.style.backgroundImage = `url('${p1fb}')`;
         p2Stack.style.backgroundImage = `url('${p2fb}')`;
