@@ -1,7 +1,26 @@
+function updateStacks(p1_count, p2_count)
+{ 
+    const p1Stack = document.querySelector('.player1 .card_stack');
+    const p2Stack = document.querySelector('.player2 .card_stack');
+    
+        const getStackImage = (count) =>
+        { 
+            if (count >= 0 && count <=1) return 'stack_1';
+            if (count <= 5) return 'stack_2';
+            if (count <= 10) return 'stack_3';
+            if (count <= 15) return 'stack_4';
+            return 'stack_5';
+        }
+
+    p1Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p1_count)}.png')`;
+    p2Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p2_count)}.png')`;
+}
+
+
+
 document.addEventListener('DOMContentLoaded', async() => 
 {   
     await updateGameState();
-    updateStacks(26, 26);
 });
 
 async function updateGameState(){ 
@@ -11,33 +30,21 @@ async function updateGameState(){
         { 
             const state = await response.json();
             console.log("Game state updated:", state); 
+
+            const p1_count = state.p1_count || 0;
+            const p2_count = state.p2_count || 0;
+
             document.getElementById('player1-cards').textContent = state.p1_count;
             document.getElementById('player2-cards').textContent = state.p2_count;
+            
+            updateStacks(p1_count, p2_count);
         }
     } catch (error){ 
         console.error('State update error:', error);
+        updateStacks(0, 0);
     }
 }
 
-function updateStacks(p1_count, p2_count)
-{ 
-    const p1Stack = document.querySelector('.player1 .card_stack');
-    const p2Stack = document.querySelector('.player2 .card_stack');
-    
-    if (p1Stack && p2Stack){ 
-        const getStackImage = (count) =>
-        { 
-            if (count <= 1) return 'stack_1';
-            if (count <= 5) return 'stack_2';
-            if (count <= 10) return 'stack_3';
-            if (count <= 15) return 'stack_4';
-            return 'stack_5';
-        }
-    };
-
-    p1Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p1_count)}.png')`;
-    p2Stack.style.backgroundImage = `url('/static/stacks/${getStackImage(p2_count)}.png')`;
-}
 
 document.getElementById('draw').addEventListener('click', async() =>
 { 
@@ -123,6 +130,7 @@ document.getElementById('draw').addEventListener('click', async() =>
             console.error('Draw error:', error);
             updateLog(`Error: ${error.message}`);
             //showError(error.message);
+            updateStacks(0, 0);
         } finally {
             drawButton.disabled = false;
             drawButton.textContent = "Draw";
