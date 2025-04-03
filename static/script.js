@@ -1,7 +1,7 @@
 function updateStacks(p1_count, p2_count) { 
     try {
-        const p1Stack = document.querySelector('.player1 .card_stack');
-        const p2Stack = document.querySelector('.player2 .card_stack');
+        const p1Stack = document.getElementById('player1_stack');
+        const p2Stack = document.getElementById('player2_stack');
         
         const getStackImage = (count) => { 
             count = parseInt(count) || 0; // Ensure it's a number
